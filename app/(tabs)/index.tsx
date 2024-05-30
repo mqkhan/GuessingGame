@@ -1,70 +1,87 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React, { useState } from "react";
+import { StyleSheet, Text, TextInput, View, Button, Alert } from "react-native";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+export default function App() {
+  const [guess, setGuess] = useState("");
+  const [feedback, setFeedback] = useState("");
+  const [targetNumber] = useState(Math.floor(Math.random() * 100) + 1);
 
-export default function HomeScreen() {
+  function handleGuess() {
+    const numericGuess = parseFloat(guess);
+    if (isNaN(numericGuess)) {
+      Alert.alert("Invalid input", "Please enter a numeric number.");
+      return;
+    }
+
+    if (numericGuess < targetNumber) {
+      setFeedback("Too low!");
+    } else if (numericGuess > targetNumber) {
+      setFeedback("Too high!");
+    } else {
+      setFeedback("Correct! You guessed the number.");
+    }
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <View style={styles.outerContainer}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Guessing Game</Text>
+        <TextInput
+          style={styles.input}
+          keyboardType="numeric"
+          placeholder="Enter your guess"
+          value={guess}
+          onChangeText={setGuess}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        <View style={styles.button}>
+          <Button title="Submit Guess" onPress={handleGuess} />
+        </View>
+
+        {feedback !== "" && <Text style={styles.feedback}>{feedback}</Text>}
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  outerContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "lightgrey",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  container: {
+    width: "50%",
+    height: "50%",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 16,
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  title: {
+    fontSize: 24,
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  input: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    marginBottom: 12,
+    paddingHorizontal: 8,
+    width: "100%",
+  },
+  button: {
+    marginTop: 12,
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+  feedback: {
+    marginTop: 16,
+    fontSize: 18,
+    textAlign: "center",
   },
 });
